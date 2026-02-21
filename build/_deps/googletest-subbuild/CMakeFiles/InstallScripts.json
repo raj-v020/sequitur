@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/rajv/Desktop/Programming/sequitur/build/_deps/googletest-subbuild/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
