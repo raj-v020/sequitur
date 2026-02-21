@@ -80,5 +80,7 @@ target_link_libraries(unit_tests PRIVATE sequitur_core gtest_main)
 
 # Latency Benchmarks
 # Note: We will create this file later
+#[[
 add_executable(benchmarks tests/benchmarks/bench_latency.cpp)
 target_link_libraries(benchmarks PRIVATE sequitur_core benchmark::benchmark)
+]]

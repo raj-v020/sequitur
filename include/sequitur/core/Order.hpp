@@ -3,7 +3,7 @@
 namespace sequitur {
 namespace core {
 
-alignas(64) struct Order {
+struct alignas(64) Order {
   // Identity
   uint64_t id;
   uint32_t instrument_id;
