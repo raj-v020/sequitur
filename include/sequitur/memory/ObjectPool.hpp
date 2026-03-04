@@ -24,7 +24,7 @@ public:
     size_t total_size = sizeof(T) * cap;
     pool = static_cast<T *>(std::aligned_alloc(64, total_size));
     free_indices = new uint32_t[cap];
-    for (int i = 0; i < cap; i++) {
+    for (size_t i = 0; i < cap; i++) {
       free_indices[i] = i;
     }
 
