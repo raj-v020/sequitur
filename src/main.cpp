@@ -4,10 +4,10 @@
 #include <sequitur/utils/Timer.hpp>
 
 int main() {
-  sequitur::memory::ObjectPool<sequitur::core::Order> pool(10'000'00);
+  sequitur::memory::ObjectPool<sequitur::core::Order> pool(10'000'000);
   {
     sequitur::utils::Timer t;
-    for (size_t i = 0; i < 10e6; i++) {
+    for (size_t i = 0; i < 10'000'000; i++) {
       pool.acquire();
     }
   }
