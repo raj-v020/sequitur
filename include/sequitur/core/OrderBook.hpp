@@ -1,9 +1,14 @@
 #include <algorithm>
 #include <cstdint>
 #include <sequitur/core/Order.hpp>
+#include <sequitur/core/Trade.hpp>
+#include <sequitur/utils/FixedQueue.hpp>
 
 namespace sequitur {
 namespace core {
+
+using ExecutionQueue = FixedQueue<Trade, 10000>;
+using GarbageQueue = FixedQueue<Order *, 10000>;
 
 static constexpr std::size_t MAX_PRICE_TICKS = 1000000;
 struct PriceLevel {
@@ -56,6 +61,66 @@ public:
     }
 
     pl.volume -= order->quantity;
+  }
+
+  void match_order(Order *incoming, ExecutionQueue &exec_q,
+                   GarbageQueue &trash_q) {
+    if (incoming->side == 0 && incoming->price >= best_ask) {
+      while (incoming->quantity > 0 && best_ask <= incoming->price) {
+        PriceLevel &pl = book[best_ask];
+        if (pl.head == nullptr) {
+          if (best_ask == MAX_PRICE_TICKS)
+            break;
+          best_ask++;
+          continue;
+        }
+
+        Order *resting = pl.head;
+        uint32_t trade_quantity =
+            std::min(incoming->quantity, resting->quantity);
+
+        exec_q.push(
+            {resting->id, incoming->id, resting->price, trade_quantity});
+
+        incoming->quantity -= trade_quantity;
+        resting->quantity -= trade_quantity;
+        pl.volume -= trade_quantity;
+
+        if (resting->quantity == 0) {
+          trash_q.push(resting);
+          remove_order(resting);
+        }
+      }
+    } else if (incoming->side == 1 && incoming->price <= best_bid) {
+      while (incoming->quantity > 0 && best_bid >= incoming->price) {
+        PriceLevel &pl = book[best_bid];
+        if (pl.head == nullptr) {
+          if (best_bid == 0)
+            break;
+          best_bid--;
+          continue;
+        }
+        Order *resting = pl.head;
+        uint32_t trade_quantity =
+            std::min(incoming->quantity, resting->quantity);
+
+        exec_q.push(
+            {resting->id, incoming->id, resting->price, trade_quantity});
+
+        incoming->quantity -= trade_quantity;
+        resting->quantity -= trade_quantity;
+        pl.volume -= trade_quantity;
+
+        if (resting->quantity == 0) {
+          trash_q.push(resting);
+          remove_order(resting);
+        }
+      }
+    }
+
+    if (incoming->quantity > 0) {
+      insert_order(incoming);
+    }
   }
 };
 } // namespace core
