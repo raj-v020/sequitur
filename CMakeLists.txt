@@ -74,8 +74,8 @@ target_link_libraries(sequitur_engine PRIVATE sequitur_core)
 enable_testing()
 
 # Unit Tests
-# Note: We will create this file in the next step
-add_executable(unit_tests tests/unit/test_orderbook.cpp)
+file(GLOB_RECURSE TEST_SOURCES "tests/unit/*.cpp")
+add_executable(unit_tests ${TEST_SOURCES})
 target_link_libraries(unit_tests PRIVATE sequitur_core gtest_main)
 
 # Latency Benchmarks
