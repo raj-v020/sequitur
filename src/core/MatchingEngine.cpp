@@ -1,1 +1,27 @@
-#include <sequitur/core/Order.hpp>
+#include <sequitur/core/MatchingEngine.hpp>
+
+namespace sequitur {
+namespace core {
+void MatchingEngine::submit_order(uint8_t side, uint64_t price,
+                                  uint32_t quantity) {
+  Order *order = pool.acquire();
+  order->side = side;
+  order->price = price;
+  order->quantity = quantity;
+  order->id = next_order_id++;
+
+  book->match_order(order, exec_q, trash_q);
+
+  for (auto *dead_order : trash_q) {
+    pool.release(dead_order);
+  }
+
+  trash_q.clear();
+
+  if (order->quantity == 0) {
+    pool.release(order);
+  }
+  exec_q.clear();
+}
+} // namespace core
+} // namespace sequitur
