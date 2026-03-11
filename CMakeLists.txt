@@ -74,12 +74,18 @@ target_link_libraries(sequitur_engine PRIVATE sequitur_core)
 enable_testing()
 
 # Unit Tests
-file(GLOB_RECURSE TEST_SOURCES "tests/unit/*.cpp")
-add_executable(unit_tests ${TEST_SOURCES})
+file(GLOB_RECURSE UNIT_TEST_SOURCES "tests/unit/*.cpp")
+add_executable(unit_tests ${UNIT_TEST_SOURCES})
 target_link_libraries(unit_tests PRIVATE sequitur_core gtest_main)
 
+# Integration Tests
+# Unit Tests
+file(GLOB_RECURSE INTEGRATION_TEST_SOURCES "tests/integration/*.cpp")
+add_executable(integration_tests ${INTEGRATION_TEST_SOURCES})
+target_link_libraries(integration_tests PRIVATE sequitur_core gtest_main)
+
+
 # Latency Benchmarks
-# Note: We will create this file later
 #[[
 add_executable(benchmarks tests/benchmarks/bench_latency.cpp)
 target_link_libraries(benchmarks PRIVATE sequitur_core benchmark::benchmark)
