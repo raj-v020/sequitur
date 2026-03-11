@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include <sequitur/core/OrderBook.hpp>
 #include <sequitur/memory/ObjectPool.hpp>
