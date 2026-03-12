@@ -4,6 +4,7 @@ namespace sequitur {
 namespace core {
 void MatchingEngine::submit_order(uint8_t side, uint64_t price,
                                   uint32_t quantity) {
+  total_orders++;
   Order *order = pool.acquire();
   order->side = side;
   order->price = price;

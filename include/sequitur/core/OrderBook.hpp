@@ -18,6 +18,9 @@ struct PriceLevel {
   uint32_t volume = 0;
 };
 class OrderBook {
+private:
+  uint64_t total_trades = 0, total_volume = 0;
+
 public:
   PriceLevel book[MAX_PRICE_TICKS + 1];
   uint64_t best_bid = 0, best_ask = MAX_PRICE_TICKS;
@@ -81,6 +84,8 @@ public:
         uint32_t trade_quantity =
             std::min(incoming->quantity, resting->quantity);
 
+        total_trades++;
+        total_volume += trade_quantity;
         exec_q.push(
             {resting->id, incoming->id, resting->price, trade_quantity});
 
@@ -106,6 +111,8 @@ public:
         uint32_t trade_quantity =
             std::min(incoming->quantity, resting->quantity);
 
+        total_trades++;
+        total_volume += trade_quantity;
         exec_q.push(
             {resting->id, incoming->id, resting->price, trade_quantity});
 
@@ -124,6 +131,9 @@ public:
       insert_order(incoming);
     }
   }
+
+  uint64_t get_total_trades() const { return total_trades; }
+  uint64_t get_total_volume() const { return total_volume; }
 };
 } // namespace core
 } // namespace sequitur
