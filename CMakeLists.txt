@@ -37,13 +37,8 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/heads/main.zip
 )
-# Google Benchmark (Latency Testing)
-FetchContent_Declare(
-  googlebenchmark
-  URL https://github.com/google/benchmark/archive/refs/heads/main.zip
-)
 # Make them available
-FetchContent_MakeAvailable(googletest googlebenchmark)
+FetchContent_MakeAvailable(googletest)
 
 # liburing (Linux Async I/O for Gateway)
 # Ensure you have 'liburing-dev' installed on your system
@@ -86,7 +81,6 @@ target_link_libraries(integration_tests PRIVATE sequitur_core gtest_main)
 
 
 # Latency Benchmarks
-#[[
-add_executable(benchmarks tests/benchmarks/bench_latency.cpp)
-target_link_libraries(benchmarks PRIVATE sequitur_core benchmark::benchmark)
-]]
+add_executable(benchmarks tests/benchmarks/bench_pure_latency.cpp)
+target_compile_definitions(benchmarks PRIVATE ENABLE_TELEMETRY)
+target_link_libraries(benchmarks PRIVATE sequitur_core)
